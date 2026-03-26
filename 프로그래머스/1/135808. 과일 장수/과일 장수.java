@@ -1,24 +1,14 @@
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+import java.util.*;
 class Solution {
     public int solution(int k, int m, int[] score) {
-        if (score.length < m) {
-            return 0;
+        int[] sc2 = new int[k+1];
+        for(int i=0; i<score.length; i++) sc2[score[i]]++; 
+        int sum=0, mod=0;
+        for(int i=k; i>0; i--){         
+            sc2[i]=sc2[i] + mod;       
+            sum += sc2[i]/m * m * i;    
+            mod = sc2[i]%m;             
         }
-        int numSaleApple = m * (score.length / m);
-        List<Integer> collect = Arrays.stream(score)
-                .boxed()
-                .sorted(Collections.reverseOrder())
-                .limit(numSaleApple)
-                .collect(Collectors.toList());
-        return IntStream.range(0, collect.size())
-                .filter(i -> i % m == m - 1)
-                .map(collect::get)
-                .reduce(Integer::sum)
-                .getAsInt() * m;
+        return sum;
     }
 }
