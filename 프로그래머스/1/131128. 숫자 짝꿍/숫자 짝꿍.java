@@ -1,79 +1,40 @@
-import java.util.*;
-
 class Solution {
     public String solution(String X, String Y) {
-        String answer = "";
-        TreeMap<Character, Integer> mapX = stringToMap(X);
-        TreeMap<Character, Integer> mapY = stringToMap(Y);
-        TreeMap<Character, Integer> mapXY = findCommonMap(mapX, mapY);
-        answer = toPair(mapXY);
-        return answer;
-    }
-    
-    // 1. 문자열을 TreeMap으로 바꿔주는 함수
-    private TreeMap<Character, Integer> stringToMap(String s) {
-        TreeMap<Character, Integer> map = new TreeMap<>();
-        for (char c : s.toCharArray()) {
-            map.merge(c, 1, Integer::sum);   
-        }
-             return map;
-    }
-    // 2. 두 TreeMap을 받아 공통된 key-value로 구성된 TreeMap을 반환하는 함수
-    private TreeMap<Character, Integer> findCommonMap(TreeMap<Character, Integer> mapX, TreeMap<Character, Integer> mapY) {
-        TreeMap<Character, Integer> commonTreeMap = new TreeMap<>(Comparator.reverseOrder());
-        for(Map.Entry<Character, Integer> entry : mapX.entrySet()) {
-            Character key = entry.getKey();
-            if (mapY.containsKey(key)) {
-                commonTreeMap.put(key, Math.min(entry.getValue(), mapY.get(key)));
+        // 0으로 초기화
+        int[] countX = new int[10]; 
+        int[] countY = new int[10];
+        
+        // 각 문자열의 자릿수를 순회하며 숫자별 빈도를 카운팅하여 배열에 업데이트
+        // 각 배열의 인덱스는 0부터 9까지의 자릿수를 의미하며, 배열의 값은 빈도 수를 의미
+        count(X, countX);
+        count(Y, countY);
+        
+        // 배열을 뒤에서부터 순회하며 더 작은 값을 선택하여 새로운 문자열 생성
+        // StringBuilder 사용하여 메모리 공간 절약
+        StringBuilder sb = new StringBuilder();
+        for(int i = 9; i >= 0; i--) {
+            long min = Math.min(countX[i], countY[i]);
+            for(int j = 0; j < min; j++) {
+                sb.append(i);
             }
         }
-        return commonTreeMap;
-    }
-    // 3. TreeMap을 받아 짝꿍을 계산하여 return하는 함수
-    private String toPair(TreeMap<Character, Integer> map) {
-        if(map.isEmpty()) return "-1";
-        if(map.firstKey().equals('0')) return "0";
         
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Character, Integer>  entry : map.entrySet()) {
-            sb.append(String.valueOf(entry.getKey()).repeat(entry.getValue()));
-        }
+        if(sb.length() == 0) return "-1";
+        if(sb.charAt(0) == '0') return "0";
         return sb.toString();
+    }
+    
+    private void count(String s, int[] arr) {
+        for(int i = 0; i < s.length(); i++) {
+            arr[Character.getNumericValue(s.charAt(i))]++;
+        }
     }
 }
 /*
-#1
-100
-2345
+어제 간과했던 부분
+1. x,y의 자릿수 : 최소 3에서 최대 3백만
+2. x,y는 문자열 형태의 양의 정수
 
-map으로 저장(숫자, 횟수)
-map은 불변과 가변 맵이 있음 -> 가변 맵인 HashMap<>을 사용해야 숫자를 읽으면서 추가 가능
-TreeMap은 키 기준 오름차순 정렬해줌 -> 내림차순은 Comparator.reverseOrder()를 인수로 넣어주면 됨
-mapX = new TreeMap<String, Integer>(Comparator.reverseOrder())
-mapY = new TreeMap<String, Integer>(Comparator.reverseOrder())
-mapX = {"1",1,"0",2}
-mapY = {"5", 1, "4",1, "3",1,"2", 1}
-겹치는 키가 없으므로 -1
-
-
-#2
-100
-203045
-mapX = {"1", 1, "0", 2}
-mapY = {"5",1, "4", 1, "3", 1, "2", 1, "0", 2}
-0 두개 겹침 -> "00" -> 0으로 시작하면 0으로 반환
-
-#3
-12321
-42531
-
-mapX = {"3", 1, "2", 2, "1", 2}
-mapY = {"5", 1, "4", 1, "3", 1, "2", 1, "1", 1}
-mapXY = {"3", 1, "2", 1, "1", 1}
-return 321
-
-1. 문자열을 TreeMap으로 바꿔주는 함수
-2. 두 TreeMap을 받아 공통된 key-value로 구성된 TreeMap을 반환하는 함수
-3. TreeMap을 받아 짝꿍을 계산하여 return하는 함수
-
+새롭게 알게 된 것
+1. string.charAt(i) 메서드를 사용하면 메모리를 추가로 할당할 필요가 없다. 단순 조회 용도라면 toCharArray() 대신 charAt(i)를 사용하자. 
 */
