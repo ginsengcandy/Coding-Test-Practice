@@ -11,7 +11,8 @@ class Solution {
         // Java 8 이상의 Stream API
         Set<Integer> lostCopy = Arrays.stream(lost)
             .boxed()
-            .collect(Collectors.toSet());
+            .sorted() // 추가
+            .collect(Collectors.toCollection(LinkedHashSet::new));
         Set<Integer> reserveCopy = Arrays.stream(reserve)
             .boxed()
             .collect(Collectors.toSet());
