@@ -7,12 +7,13 @@ class Solution {
         // 최악의 경우 (잃어버린 학생들 모두 여벌옷이 없을 때)에서 시작
         int answer = n - lost.length;
         
-        // lost를 set으로 변환
+        // lost, reserve를 각각 set으로 변환
         // Java 8 이상의 Stream API
         Set<Integer> lostCopy = Arrays.stream(lost)
             .boxed()
             .sorted() // 추가
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .collect(Collectors.toSet());
+        
         Set<Integer> reserveCopy = Arrays.stream(reserve)
             .boxed()
             .collect(Collectors.toSet());
